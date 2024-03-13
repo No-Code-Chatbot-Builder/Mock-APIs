@@ -1,4 +1,3 @@
-
 FORMAT: 1A
 HOST: https://polls.apiblueprint.org/
 
@@ -474,11 +473,9 @@ object containing the query.
 
 + Request (application/json)
 
-        {
-            "name": "string", // Required: Name of the dataset
-            "description": "string", // Optional: A brief description of the particular dataset
-            "workspaceId": "string", // Required: workspace ID
-        }
+        @Body() 
+        body: { name: string; description?: string }, 
+        @Param('workspaceId') workspaceId: string
 
 
 + Response 201 (application/json)
@@ -490,13 +487,14 @@ object containing the query.
     + Body
 
         {
-            "success": True,
+            "success": "true",
             "message": "Dataset created successfully.",
-            "workspaceId": "generatedDatasetId", // Unique identifier for the new dataset
             "datasetDetails": {
-            "name": "string",
-            "description": "string",
-            "workspaceId": "string",
+                "datasetId": "datasetId",
+                "name": "name",
+                "description": "description",
+            }
+
         }
 
         
@@ -508,9 +506,7 @@ object containing the query.
 
 + Request (application/json)
 
-        workspaceId: The ID of the workspace for whom to fetch datasets. If provided, the API will return datasets associated with this workspace.
-        page: The page number for pagination.
-        pageSize: The number of workspaces per page for pagination.
+        @Param('workspaceId') workspaceId: string
         
 + Response 201 (application/json)
 
@@ -522,28 +518,25 @@ object containing the query.
 
         {
             "success": True,
+            "message": "Datasets fetched successfully.",
             "datasets": [
-            {
-              "id": "datasetId1",
-              "name": "Dataset 1",
-              "workspaceId": "workspaceId1",
-              "data": [
-                // ... list of data files (File, Text, Url)
-              ]
-            },
-            {
-              "id": "datasetId2",
-              "name": "Dataset 2",
-              "workspaceId": "workspaceId1",
-              "data": [
-                // ... list of data files (File, Text, Url)
-              ]
-            },
-            // ... other workspaces
-            ],
-            "totalDatasets": 50, // Total number of datasets
-            "currentPage": 1, // Current page number
-            "pageSize": 10 // Number of datasets per page
+                {
+                    "id": "UUID/string",
+                    "name": "String",
+                    "description": "String",
+                    "createdAt": "DateTTime",
+                    "createdBy": "String",
+              
+                },
+                {
+                    "id": "UUID/string",
+                    "name": "String",
+                    "description": "String",
+                    "createdAt": "DateTTime",
+                    "createdBy": "String",
+                  
+                },
+            ]
         }
 
 
@@ -558,46 +551,54 @@ object containing the query.
 
 + Request (application/json)
 
-        workspaceId [required]: The unique identifier of the workspace whose details are to be retrieved.
+        @Param('workspaceId') workspaceId: string, 
+        @Param('datasetId') datasetId: string
 
 
 + Response 201 (application/json)
 
     + Headers
 
-            Location: /dataset/{id}
+        Location: /dataset/{id}
 
     + Body
 
         {
-            "success": True,
-            "dataset": {
-            "id": "datasetId",
-            "name": "Dataset Name",
-            "description": "Dataset Description",
-            "workspaceId": "workspaceId",
+            "success": true,
+            "message": "Dataset fetched successfully.",
+            "datasetDetails": {
+                "datasetId": "8788cb31-4e61-4851-9be2-1790a61e578e",
+                "name": "Checking createdBy",
+                "description": "Noobs",
+                "createdAt": "2024-03-11T10:26:28.982Z",
+                "createdBy": "123"
+            },
             "data": [
-              {
-                "id": "dataId1",
-                "type": "file",
-                "path": "https://s3:pathfile",
-              },
-              {
-                "id": "dataId2",
-                "type": "text",
-                "content": "Hello world This is NCBP"
-              },
-              {
-                "id": "dataId3",
-                "type": "website",
-                "url": "https://www.google.com"
-              }
-              // ... other data
-            ],
-            "settings": {
-              // ... various settings
-            }
-            }
+                {
+                    "dataId": "04c4b21c-3229-4eeb-ad11-8045c96177ea",
+                    "name": "fioriappslibrary.hana.ondemand.com",
+                    "type": "url",
+                    "path": "https://fioriappslibrary.hana.ondemand.com",
+                    "createdAt": "2024-03-11T10:33:22.410Z",
+                    "createdBy": "123"
+                },
+                {
+                    "dataId": "0a35d353-2d92-47c6-90fc-bf8e3b9b4903",
+                    "name": "Lecture 4- Entity Relationship Modeling.pptx",
+                    "type": "file",
+                    "path": "https://ncbp-assets.s3.us-east-1.amazonaws.com/USER#123/WORKSPACE#123/DATASET#8788cb31-4e61-4851-9be2-1790a61e578e/3c4c63c5-bee7-441e-accd-c7fa482ff853",
+                    "createdAt": "2024-03-11T10:30:49.277Z",
+                    "createdBy": "123"
+                },
+                {
+                    "dataId": "87bad4bd-a794-42a5-826d-4ff921cac2b9",
+                    "name": "fioriappslibrary.hana.ondemand.com",
+                    "type": "url",
+                    "path": "https://fioriappslibrary.hana.ondemand.com/sap/fix/externalViewer/",
+                    "createdAt": "2024-03-11T10:29:41.751Z",
+                    "createdBy": "123"
+                }
+    
         }
         
 
@@ -608,11 +609,11 @@ It takes a JSONobject containing the query.
 
 
 + Request (application/json)
-
+        
+        @Param('workspaceId') workspaceId: string, @Param('datasetId') datasetId: string)
+        body:
         {
-            "data_id": "newDataId",
-            "type": "file",
-            "path": "https://s3:pathfile"
+            "url/file": "string/file"
         }
 
 + Response 201 (application/json)
@@ -624,13 +625,19 @@ It takes a JSONobject containing the query.
     + Body
 
         {
-            "status": "success",
-            "message": "Data added to dataset {id} successfully",
-            "datasetId": "datasetId",
-            "dataDetails": {
-                "data_id": "newDataId",
-                "type": "file",
-                "path": "https://s3:pathfile"
+            "responseForAddingData": {
+                "success": true,
+                "message": "Data added successfully.",
+                "dataDetails": {
+                    "dataId": "0a35d353-2d92-47c6-90fc-bf8e3b9b4903",
+                    "type": "file",
+                    "path": "https://ncbp-assets.s3.us-east-1.amazonaws.com/USER#123/WORKSPACE#123/DATASET#8788cb31-4e61-4851-9be2-1790a61e578e/3c4c63c5-bee7-441e-accd-c7fa482ff853"
+                }
+            },
+            "responseForAddingFileNameUUID": {
+            "success": true,
+            "message": "File Name against UUID added successfully to DynamoDb.",
+            "fileId": "3c4c63c5-bee7-441e-accd-c7fa482ff853"
             }
         }
         
@@ -643,10 +650,8 @@ object containing the query.
 
 + Request (application/json)
 
-        {
-            "dataset_id": "123"
-            "data_id": "456"
-        }
+        @Param('datasetId') datasetId: string, 
+        @Param('dataId') dataId: string
 
 + Response 201 (application/json)
 
@@ -657,12 +662,12 @@ object containing the query.
     + Body
 
             {
-                "status": "success",
-                "message": "Data details retrieved successfully",
-                "data_details": {
-                    "data_id": "newDataId",
-                    "type": "file",
-                    "path": "https://s3:pathfile"
+                "success": true,
+                "message": "Data fetched successfully.",
+                "dataDetails": {
+                    "dataId": "87bad4bd-a794-42a5-826d-4ff921cac2b9",
+                    "type": "url",
+                    "path": "https://fioriappslibrary.hana.ondemand.com/sap/fix/externalViewer/"
                 }
             }
 
